@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package de.pointgame;
 
 import java.io.IOException;
@@ -18,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class PointGame extends HttpServlet {
 
-    String px;
-    String py;
-   
+    String px = "10";
+    String py = "10";
+
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -29,17 +28,19 @@ public class PointGame extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        px = request.getParameter("px");
-        py = request.getParameter("py");
+            throws ServletException, IOException {
+        if (request.getParameter("px") != null) {
+            px = request.getParameter("px");
+            py = request.getParameter("py");
+        }
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            out.println("{\"px\": \"100\",\"py\": \"200\"}");
-        } finally { 
+            out.println("{\"px\": \"" + px + "\",\"py\": \"" + py + "\"}");
+        } finally {
             out.close();
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
@@ -51,9 +52,9 @@ public class PointGame extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
-    } 
+    }
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -64,7 +65,7 @@ public class PointGame extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -76,5 +77,4 @@ public class PointGame extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }

@@ -1,54 +1,55 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
-var xmlHttp = getXmlHttp();
-
-function getXmlHttp(){
-    try {
-        // Mozilla, Opera, Safari sowie Internet Explorer (ab v7)
-        xmlHttp = new XMLHttpRequest();
-    } catch(e) {
-        try {
-            // MS Internet Explorer (ab v6)
-            xmlHttp  = new ActiveXObject("Microsoft.XMLHTTP");
-        } catch(e) {
-            try {
-                // MS Internet Explorer (ab v5)
-                xmlHttp  = new ActiveXObject("Msxml2.XMLHTTP");
-            } catch(e) {
-                xmlHttp  = null;
-            }
-        }
-    }
-    return xmlHttp;
-}
-
-function sendRequest(){
-    if (xmlHttp) {
-        xmlHttp.open('POST', 'PointGame.do', true);
-        xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xmlHttp.onreadystatechange = handleRequest;
-        xmlHttp.send("px=100&py=200");
+var ctx;
+var url = "PointGame.do";
+var playGround = {
+    w:0,
+    h:0
+};
+var player = {
+    w:20,
+    h:20,
+    x:0,
+    y:0,
+    draw: function(){
+        ctx.beginPath();
+        ctx.rect(this.x, this.y, this.w, this.h);
+        ctx.closePath();
+        ctx.fill();
     }
 }
 
-function handleRequest(){
-    if(xmlHttp.readyState == 4){
-        var resp = xmlHttp.responseText;
-        var px = resp.substr(3, 3);
-        alert(px);
-    }
+jQuery(document).ready(function(){
+    init();
+})
+
+function init(){
+    var canvas = document.getElementById("pointGameCanvas");
+    ctx = canvas.getContext("2d");
+    playGround.w = canvas.width;
+    playGround.h = canvas.height;
+    $("#pointGameCanvas").click(onClick);
+    setInterval(mainLoop, 100);
 }
 
-
-function jqHandler(data){
-    alert(data.px + " | " + data.py);
+function onClick(evt){
+    var x = evt.pageX - this.offsetLeft;
+    var y = evt.pageY - this.offsetTop;
+    $("#status").html(x + ", " + y);
+    player.x = x - player.w/2;
+    player.y = y - player.w/2;
+    var data="px=" + player.x + "&py=" + player.y;
+    $.post(url, data, requestHandler, "json");
 }
 
-function jqTest(){
-    var url = "PointGame.do";
-    var data="px=100&py=200";
-    $.getJSON(url, data, jqHandler);
+function mainLoop(){
+    $.post(url, "", requestHandler, "json");
+    ctx.clearRect(0,0, playGround.w, playGround.h);
+    player.draw();
+    $("#status").html(player.x + ", " + player.y);
 }
+
+function requestHandler(data){
+    player.x = data.px;
+    player.y = data.py;
+}
+
