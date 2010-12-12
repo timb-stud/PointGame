@@ -23,12 +23,14 @@ jQuery(document).ready(function(){
 })
 
 function init(){
+    var data = "";
+    $.get(url, data, requestHandler, "text");
     var canvas = document.getElementById("pointGameCanvas");
     ctx = canvas.getContext("2d");
     playGround.w = canvas.width;
     playGround.h = canvas.height;
     $("#pointGameCanvas").click(onClick);
-    setInterval(mainLoop, 100);
+    //setInterval(mainLoop, 100);
 }
 
 function onClick(evt){
@@ -42,14 +44,14 @@ function onClick(evt){
 }
 
 function mainLoop(){
-    $.post(url, "", requestHandler, "json");
     ctx.clearRect(0,0, playGround.w, playGround.h);
     player.draw();
     $("#status").html(player.x + ", " + player.y);
 }
 
 function requestHandler(data){
-    player.x = data.px;
-    player.y = data.py;
+    alert(data);
+    //player.x = data.px;
+    //player.y = data.py;
 }
 
